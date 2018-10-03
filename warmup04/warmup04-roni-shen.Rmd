@@ -1,0 +1,158 @@
+---
+title: "warmup04-roni-shen"
+author: "Roni Shen"
+date: "9/23/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Download the Data
+```{r eval = FALSE}
+
+# make a new directory and change working directory
+mkdir warmup04
+cd warmup04
+
+# download the data
+curl -O https://raw.githubusercontent.com/ucb-stat133/stat133-fall-2018/master/data/nba2018.csv
+
+```
+
+
+## 1) Import the Data in R
+
+```{r}
+
+setwd("~/Desktop/hw-stat133/warmup04")
+library(readr)
+
+# import the data with the function read_csv()
+data <- read_csv("nba2018.csv", 
+                 col_types = list(player = col_character(), team = col_character(), height = col_character(), birth_date = col_character(), country = col_character(), experience = col_character(), college = col_character(), position = col_factor(c('C', 'PF', 'PG',
+'SF', 'SG')), salary = col_double(), field_goals_perc = col_double(), points3_perc = col_double(), points2_perc = col_double(), points1_perc = col_double(), effective_field_goal_perc = col_double()))
+str(data)
+
+```
+
+
+## 2) Right after importing the data
+
+```{r}
+
+# transform salary  
+data$experience[data$experience == "R"] <- 0
+data$experience <- as.integer(data$experience)
+summary(data$experience)
+
+# transforming salary 
+data$salary <- data$salary/1000000
+summary(data$salary)
+
+# transforming position 
+data$position <- sub("C", "center", data$position)
+data$position <- sub("PF", "power_fwd", data$position)
+data$position <- sub("PG", "point_guard", data$position)
+data$position <- sub("SF", "small_fwd", data$position)
+data$position <- sub("SG", "shoot_guard", data$position)
+prop.table(table(data$position))
+
+```
+
+
+## 3) A bit of subscripting
+
+```{r}
+
+# How many players went to UCLA?
+length(data$player[data$college == "UCLA"])
+
+# How many players went to Cal?
+length(data$player[data$college == "UCB"])
+
+# What’s the largest weight value?
+sort(data$weight, decreasing = TRUE)[1]
+
+# Who are the players with the largest weight value?
+data$player[sort(data$weight, decreasing = TRUE)[1]]
+
+# What’s the overall average weight?
+mean(data$weight)
+
+# What is the median salary of all players?
+median(data$salary)
+
+# What is the median salary of the players with 10 years of experience or more?
+median(data$salary[data$experience > 10])
+
+# What is the median salary of Shooting Guards (SG) and Point Guards (PG)?
+median(data$salary[data$position == "shoot_guard" | data$position == "point_guard"])
+
+# What is the median salary of Power Forwards (PF), 30 years or older, weighing 240 pounds or more?
+median(data$salary[data$position == "power_fwd" & data$age >= 30 & data$weight >= 240])
+
+# Create a data frame gsw with the player name, position, height, weight, and age of Golden State Warriors (GSW). Display this data frame.
+gsw <- data.frame(data$player, data$position, data$height, data$weight, data$age)
+gsw
+
+```
+
+
+## 4) Performance of players
+
+```{r}
+
+missed_field_goals = data$field_goals_atts - data$field_goals
+missed_free_throws = data$points1_atts - data$points1
+rebounds = data$off_rebounds + data$def_rebounds
+mins_game = data$minutes/data$games
+data = data.frame(data, missed_field_goals, missed_free_throws, rebounds, mins_game)
+
+# calculateing efficiency
+efficiency = (data$points + rebounds + data$assists + data$steals + data$blocks - missed_field_goals - missed_free_throws - data$turnovers) / data$games
+data = data.frame(data, efficiency)
+
+# displaying efficiency
+summary(efficiency)
+hist(efficiency, xlab = "Efficiency", ylab = "Frequency of Efficiency", main = "Efficiency of Players in NBA", col = "pink") 
+
+# top 10 efficiency
+data.frame(data$player[head(sort(efficiency, decreasing = TRUE), 10)], data$team[head(sort(efficiency, decreasing = TRUE), 10)], data$salary[head(sort(efficiency, decreasing = TRUE), 10)], head(sort(efficiency, decreasing = TRUE), 10))
+
+# negative efficiency
+data$player[efficiency < 0] 
+
+```
+
+
+## 5) Further Exploration
+
+```{r}
+
+# The more efficient a player is, the higher his salary? There seems to be a general trend towards having a higher salary with higher efficiency, however the correlation is not very strong. 
+plot(efficiency, data$salary, xlab = "Efficiency of Players", ylab = "Salary of Players", main = "Correlation between Efficiency and Salary of NBA Players" )
+
+# As players get older, do they tend to become more efficient? There is almost no correlation between age and efficiency, if anything, it could be argued that there are less efficient, older players.
+plot(data$age, efficiency, xlab = "Age of Players", ylab = "Efficiency of Players", main = "Correlation between Age and Efficiency of NBA Players" )
+
+# Does the rank of a player seem to be associated with his efficiency (i.e. the more importnat the rank, the more efficient)? There does seem to be a correlation between rank and efficiency, such that higher ranked players have higher efficiency. 
+plot(data$rank, efficiency, xlab = "Rank of Players", ylab = "Efficiency of Players", main = "Correlation between Rank and Efficiency of NBA Players" )
+
+```
+
+
+## 6) Comments and Reflections
+
+```{r}
+
+# How much time did it take to complete this HW? Around 2 hours.
+# What things were hard, even though you saw them in class/lab? Some things were a little difficult, but mostly just small detailed errors. 
+# What was easy(-ish) even though we haven’t done it in class/lab? Nothing was super easy.
+# Did you need help to complete the assignment? If so, what kind of help? Sometimes I know what function I need, but I can't remember the name of it so I have to search it on google. 
+# What was the most time consuming part? In problem one, I kept trying to import the table using read.csv() for like 30 min and it not working with col_types, before I realized it should be read_csv()
+# Was there anything that you did not understand? or fully grasped? No
+# Was there anything frustrating in particular? No 
+
+```

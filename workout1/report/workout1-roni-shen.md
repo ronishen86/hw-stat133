@@ -3,13 +3,67 @@ roni-shen-workout1
 Roni Shen
 10/3/2018
 
-1) File Structure
------------------
+File Structure
+--------------
 
 ``` r
-cd ~/Desktop/hw-stat133
+cd Desktop/hw-stat133
 mkdir workout1
 cd workout1
 mkdir data code output report
 touch README.md
+curl -O https://raw.githubusercontent.com/ucb-stat133/stat133-fall-2018/master/data/nba2018.csv
+```
+
+Ranking of Teams
+----------------
+
+``` r
+# packages
+library(ggplot2)
+
+# importing data
+teams <- read.csv(file = "../data/nba2018-teams.csv")
+
+# basic rankings : teams by salary
+ggplot(teams, aes(x = reorder(team, salary), y = salary)) +  geom_bar(stat = "identity") + coord_flip() + xlab("Team") + ylab("Salary") + ggtitle("NBA Teams Ranked by Total Salary") + geom_hline(yintercept = mean(teams$salary))
+```
+
+![](workout1-roni-shen_files/figure-markdown_github/unnamed-chunk-2-1.png)
+
+``` r
+# teams ranked by points
+ggplot(teams, aes(x = reorder(team, points), y = points)) +  geom_bar(stat = "identity") + coord_flip() + xlab("Team") + ylab("Points") + ggtitle("NBA Teams Ranked by Total Points") + geom_hline(yintercept = mean(teams$points))
+```
+
+![](workout1-roni-shen_files/figure-markdown_github/unnamed-chunk-2-2.png)
+
+``` r
+# teams ranked by efficiency 
+ggplot(teams, aes(x = reorder(team, efficiency ), y = efficiency )) +  geom_bar(stat = "identity") + coord_flip() + xlab("Team") + ylab("Efficiency ") + ggtitle("NBA Teams Ranked by Total efficiency ") + geom_hline(yintercept = mean(teams$efficiency ))
+```
+
+![](workout1-roni-shen_files/figure-markdown_github/unnamed-chunk-2-3.png)
+
+``` r
+# teams ranked by index of choice
+teams$team_work <- teams$def_rebounds + teams$assists
+ggplot(teams, aes(x = reorder(team, team_work ), y = team_work )) +  geom_bar(stat = "identity") + coord_flip() + xlab("Team") + ylab("Team Work ") + ggtitle("NBA Teams Ranked by Total Team Work ") + geom_hline(yintercept = mean(teams$team_work ))
+```
+
+![](workout1-roni-shen_files/figure-markdown_github/unnamed-chunk-2-4.png)
+
+Comments and Reflections
+------------------------
+
+``` r
+# Was this your first time working on a project with such file structure? If yes, how do you feel about it? No, I think this project was pretty similar to some of the previous workouts/labs.
+# Was this your first time using relative paths? If yes, can you tell why they are important for reproducibility purposes? No I've used relative paths before. Using relative paths helps you keep a tree diagram of how all the files and directories are connected as well as use the easiest path instead of having to find a certain file or directory from the top. 
+# Was this your first time using an R script? If yes, what do you think about just writing code (without markdown syntax)? No, I've used R script in the previous lab. It's less work since I don't have to write "```{r}" to indicate the code I'm writing is R code, but also I like using R markdown so I can section off my code more clearly. 
+# What things were hard, even though you saw them in class/lab? Just remembering all the functions for everything. 
+# What was easy(-ish) even though we haven’t done it in class/lab? Finding out how to make a horizontal histogram.
+# Did anyone help you completing the assignment? If so, who? No.
+# How much time did it take to complete this HW? around 2.5 hours.
+# What was the most time consuming part? Figuring out what "index" means in "Create a fourth bar chart but this time using your own index."
+# Was there anything interesting? Making a horizontal bar graph and adding in the average line was interesting. 
 ```

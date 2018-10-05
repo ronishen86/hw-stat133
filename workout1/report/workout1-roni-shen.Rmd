@@ -31,6 +31,9 @@ curl -O https://raw.githubusercontent.com/ucb-stat133/stat133-fall-2018/master/d
 # packages
 library(ggplot2)
 
+# importing data
+teams <- read.csv(file = "../data/nba2018-teams.csv")
+
 # basic rankings : teams by salary
 ggplot(teams, aes(x = reorder(team, salary), y = salary)) +  geom_bar(stat = "identity") + coord_flip() + xlab("Team") + ylab("Salary") + ggtitle("NBA Teams Ranked by Total Salary") + geom_hline(yintercept = mean(teams$salary))
 
@@ -40,6 +43,9 @@ ggplot(teams, aes(x = reorder(team, points), y = points)) +  geom_bar(stat = "id
 # teams ranked by efficiency 
 ggplot(teams, aes(x = reorder(team, efficiency ), y = efficiency )) +  geom_bar(stat = "identity") + coord_flip() + xlab("Team") + ylab("Efficiency ") + ggtitle("NBA Teams Ranked by Total efficiency ") + geom_hline(yintercept = mean(teams$efficiency ))
 
+# teams ranked by index of choice
+teams$team_work <- teams$def_rebounds + teams$assists
+ggplot(teams, aes(x = reorder(team, team_work ), y = team_work )) +  geom_bar(stat = "identity") + coord_flip() + xlab("Team") + ylab("Team Work ") + ggtitle("NBA Teams Ranked by Total Team Work ") + geom_hline(yintercept = mean(teams$team_work ))
 
 ```
 

@@ -1,0 +1,465 @@
+---
+title: "lab08-roni-shen"
+author: "Roni Shen"
+date: "10/17/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, error = TRUE)
+```
+
+
+# For loops
+
+```{r}
+
+# using vectorized code to add 1 to every element of vec
+vec <- c(3, 1, 4) 
+
+vec + 1
+
+# manually add 1 to every element of vec
+vec <- c(3, 1, 4) 
+
+vec[1] + 1
+vec[2] + 1
+vec[3] + 1
+
+# using a for loop 
+vec <- c(3, 1, 4) 
+
+for (j in 1:3) {
+  print(vec[j] + 1)
+}
+
+# rewrite the for loop in order to triple every element in vec, and printing the output at each step of the loop:
+vec <- c(2, 4, 6, 8, 10) 
+
+for (j in 1:5) { 
+  print(vec[j] * 3)
+}
+
+# create a new vector to store the values produced at each iteration of the loop
+vec <- c(2, 4, 6, 8, 10) 
+vec2 <- rep(0, length(vec))  
+
+for (i in 1:5) {
+  vec2[i] = vec[i] * 3
+}
+
+```
+
+
+## Summation Series
+
+```{r}
+
+# sum of 1/(2 ^ k) : converges to 2
+sum2_10 = 1
+sum2_10_vec = rep(0,10)
+for (i in 1:10) {
+  sum2_10_vec[i] = 1/(2 ^ i)
+  sum2_10 = sum2_10 + sum2_10_vec[i]
+}
+
+sum2_50 = 1
+sum2_50_vec = rep(0,50)
+for (i in 1:50) {
+  sum2_50_vec[i] = 1/(2 ^ i)
+  sum2_50 = sum2_50 + sum2_50_vec[i]
+}
+
+sum2_100 = 1
+sum2_100_vec = rep(0,100)
+for (i in 1:100) {
+  sum2_100_vec[i] = 1/(2 ^ i)
+  sum2_100 = sum2_100 + sum2_100_vec[i]
+}
+
+# sum of 1/(9 ^ k) : converges to 9/8
+sum9_10 = 1
+sum9_10_vec = rep(0,10)
+for (i in 1:10) {
+  sum9_10_vec[i] = 1/(9 ^ i)
+  sum9_10 = sum9_10 + sum9_10_vec[i]
+}
+
+sum9_50 = 1
+sum9_50_vec = rep(0,50)
+for (i in 1:50) {
+  sum9_50_vec[i] = 1/(9 ^ i)
+  sum9_50 = sum9_50 + sum9_50_vec[i]
+}
+
+sum9_100 = 1
+sum9_100_vec = rep(0,100)
+for (i in 1:100) {
+  sum9_100_vec[i] = 1/(9 ^ i)
+  sum9_100 = sum9_100 + sum9_100_vec[i]
+}
+
+# Arithmetic Series: the series does not converge
+arith_ser_10 = rep(0, 10) 
+arith_ser_10_sum = 0
+for (i in 1:10) {
+  arith_ser_10[i] = 3 + (i - 1) * 3
+  arith_ser_10_sum = arith_ser_10_sum + arith_ser_10[i]
+}
+
+arith_ser_50 = rep(0, 50) 
+arith_ser_50_sum = 0
+for (i in 1:50) {
+  arith_ser_50[i] = 3 + (i - 1) * 3
+  arith_ser_50_sum = arith_ser_50_sum + arith_ser_50[i]
+}
+
+arith_ser_100 = rep(0, 100) 
+arith_ser_100_sum = 0
+for (i in 1:100) {
+  arith_ser_100[i] = 3 + (i - 1) * 3
+  arith_ser_100_sum = arith_ser_100_sum + arith_ser_100[i]
+}
+
+# Geometric Series: does not converge
+geo_10 = rep(0, 10) 
+geo_10_sum = 0
+for (i in 1:10) {
+  geo_10[i] = 3 * 2 ^ (i - 1)
+  geo_10_sum = geo_10_sum + geo_10[i]
+}
+
+geo_50 = rep(0, 50) 
+geo_50_sum = 0
+for (i in 1:50) {
+  geo_50[i] = 3 * 2 ^ (i - 1)
+  geo_50_sum = geo_50_sum + geo_50[i]
+}
+
+geo_100 = rep(0, 100) 
+geo_100_sum = 0
+for (i in 1:100) {
+  geo_100[i] = 3 * 2 ^ (i - 1)
+  geo_100_sum = geo_100_sum + geo_100[i]
+}
+
+```
+
+
+# Sine Approximation
+
+```{r}
+
+# sin(2)
+sin_for_loop_5 = 0
+for (i in 1:5) {
+  j = ((i * 2) - 1)
+  if (i %% 2 != 0) {
+    sin_for_loop_5 = sin_for_loop_5 + (2 ^ j / factorial(j))
+  } else {
+    sin_for_loop_5 = sin_for_loop_5 - (2 ^ j / factorial(j))
+  }
+}
+
+sin_for_loop_10 = 0
+for (i in 1:10) {
+  j = ((i * 2) - 1)
+  if (i %% 2 != 0) {
+    sin_for_loop_10 = sin_for_loop_10 + (2 ^ j / factorial(j))
+  } else {
+    sin_for_loop_10 = sin_for_loop_10 - (2 ^ j / factorial(j))
+  }
+}
+
+sin_for_loop_50 = 0
+for (i in 1:50) {
+  j = ((i * 2) - 1)
+  if (i %% 2 != 0) {
+    sin_for_loop_50 = sin_for_loop_50 + (2 ^ j / factorial(j))
+  } else {
+    sin_for_loop_50 = sin_for_loop_50 - (2 ^ j / factorial(j))
+  }
+}
+
+sin_for_loop_100 = 0
+for (i in 1:100) {
+  j = ((i * 2) - 1)
+  if (i %% 2 != 0) {
+    sin_for_loop_100 = sin_for_loop_100 + (2 ^ j / factorial(j))
+  } else {
+    sin_for_loop_100 = sin_for_loop_100 - (2 ^ j / factorial(j))
+  }
+}
+
+# compare with sine function
+sin_2 = sin(2)
+
+```
+
+
+# For loop with a matrix 
+
+```{r}
+
+A <- matrix(1:20, nrow = 5, ncol = 4)
+A
+
+# empty matrix B
+B <- matrix(NA, nrow = 5, ncol = 4)
+
+# for loop to get matrix B
+for (i in 1:nrow(A)) {
+  for (j in 1:ncol(A)) {
+    B[i,j] <- A[i,j] + i
+  }
+}
+
+B
+
+# matrix X
+set.seed(123)
+X <- matrix(rnorm(12), nrow = 4, ncol = 3)
+X
+
+# the negative numbers in A are transformed into squared values, while the positive numbers in A are transformed into square root values
+
+Y <-  matrix(NA, nrow = 4, ncol = 3)
+for (i in 1:nrow(X)) {
+  for (j in 1:ncol(Y)) {
+    if (X[i,j] >= 0) {
+      Y[i,j] = sqrt(X[i,j])
+    } else {
+      Y[i,j] = X[i,j] ^ 2
+    }
+  }
+}
+
+Y
+
+```
+
+
+# Dividing a number by 2 multiple times
+
+```{r}
+
+# Divide a number by 2 until it becomes odd.
+val_rep <- 898128000 # Change this value!
+
+repeat {
+  print(val_rep)
+  if (val_rep %% 2 == 1) { # If val_rep is odd,
+    break                  # end the loop.
+  }
+  val_rep <- val_rep / 2 # Divide val_rep by 2 since val_rep was even.
+  # When the end of the loop is reached, return to the beginning of the loop.
+}
+
+# Divide a number by 2 until it becomes odd.
+val_while <- 898128000 # Change this value!
+
+while (val_while %% 2 == 0) { # Continue the loop as long as val_while is even.
+  print(val_while)
+  val_while <- val_while / 2
+}
+
+print(val_while)
+
+# your reduce() function
+reduce <- function(x) {
+  while(x %% 2 == 0) {
+    print(x)
+    x <- x / 2
+  }
+}
+
+reduce(898128000)
+
+```
+
+
+# Average 
+```{r}
+
+x = 1:100
+
+# using for loops
+for_sum = 0
+for (i in 1:length(x)) {
+  for_sum = for_sum + x[i]
+}
+for_average = for_sum / length(x)
+
+# using while loops
+while_sum = 0
+i = 1
+while (i <= length(x)) {
+  while_sum = while_sum + x[i]
+  i = i + 1
+}
+while_average = while_sum / length(x)
+
+# using repeat loops
+repeat_sum = 0
+i = 1
+repeat {
+  if (i > length(x)) {
+    break
+  } 
+  repeat_sum = repeat_sum + x[i]
+  i = i + 1  
+}
+repeat_average = repeat_sum / length(x)
+
+```
+
+
+# Standard Deviation
+
+```{r}
+
+x = 1:100
+
+# using for loop
+sd_for_sum = 0
+for (i in 1:length(x)) {
+  sd_for_sum = sd_for_sum + (x[i] - for_average) ^ 2
+}
+sd_for = sqrt((1/(length(x)-1)) * sd_for_sum)
+
+# using while loop
+sd_while_sum = 0
+i = 1
+while (i <= length(x)) {
+  sd_while_sum = sd_while_sum + (x[i] - while_average) ^ 2
+  i = i + 1
+}
+sd_while = sqrt((1/(length(x)-1)) * sd_while_sum)
+
+# using repeat loop
+sd_repeat_sum = 0
+i = 1
+repeat {
+  if (i > length(x)) {
+    break
+  }
+  sd_repeat_sum = sd_repeat_sum + (x[i] - repeat_average) ^ 2
+  i = i + 1
+}
+sd_repeat = sqrt((1/(length(x)-1)) * sd_repeat_sum)
+
+```
+
+
+## Geometeric Mean 
+
+```{r}
+
+x = 1:50
+
+# using for loop
+geo_mean_for_product = 1
+for (i in 1:length(x)) {
+  geo_mean_for_product = geo_mean_for_product  * i
+}
+geo_mean_for = geo_mean_for_product ^ (1 / length(x))
+
+# using while loop
+geo_mean_while_product = 1
+i = 1
+while (i <= length(x)) {
+  geo_mean_while_product = geo_mean_while_product  * i
+  i = i + 1
+}
+geo_mean_while = geo_mean_while_product ^ (1 / length(x))
+
+# using repeat loop
+geo_mean_repeat_product = 1
+i = 1
+repeat {
+  if (i > length(x)) {
+    break
+  }
+  geo_mean_repeat_product = geo_mean_repeat_product  * i
+  i = i + 1
+}
+geo_mean_repeat = geo_mean_repeat_product ^ (1 / length(x))
+
+```
+
+
+# Distance Matrix of Letters
+
+```{r}
+
+# random distance matrix
+num_letters <- length(LETTERS)
+set.seed(123)
+values <- sample.int(num_letters) 
+distances <- values %*% t(values)
+diag(distances) <- 0
+dimnames(distances) <- list(LETTERS, LETTERS)
+
+#' @title get distance
+#' @description finds the distance between letters
+#' @param distances the matrix of distance among letters.
+#' @param ltrs a character vector of upper case letters.
+#' @return a numeric value with the total distance
+get_dist <- function(distances, ltrs) {
+  for (i in ltrs) {
+    if (!is.element(i, LETTERS)) {
+      stop("There is a value that does not match any capital letters")
+    }
+  }
+  sum_dist = 0
+  for (i in 1:(length(ltrs)-1)) {
+    sum_dist = sum_dist + distances[ltrs[i],ltrs[i+1]]
+  }
+  return(sum_dist)
+}
+
+# testing get_dist
+vec <- c('E', 'D', 'A')
+get_dist(distances, vec)
+
+err <- c('E', 'D', ')')
+get_dist(distances, err)
+
+cal <- c('C', 'A', 'L')
+get_dist(distances, cal)
+
+stats <- c('S', 'T', 'A', 'T', 'S')
+get_dist(distances, stats)
+
+oski <- c('O', 'S', 'K', 'I')
+get_dist(distances, oski)
+
+zzz <- rep('Z', 3)
+get_dist(distances, zzz)
+
+lets <- LETTERS
+get_dist(distances, lets)
+
+roni <-  c("R", "O", "N", "I")
+get_dist(distances, roni)
+
+shen <- c("S", "H", "E", "N")
+get_dist(distances, shen)
+
+# your turn
+strings <- list(
+  cal = cal,
+  stats = stats,
+  oski = oski,
+  zzz = zzz,
+  lets = lets,
+  roni = roni,
+  shen = shen
+)
+
+strings_dists <- strings
+for (i in 1:length(strings)) {
+  strings_dists[i] = get_dist(distances, strings[[i]])
+}
+
+```

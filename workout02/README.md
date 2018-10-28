@@ -1,0 +1,1 @@
+This HW is about creating functions, documenting functions with Roxygen comments, using if-conditionals, loop structures, and manipulation of strings 

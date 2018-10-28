@@ -1,5 +1,3 @@
-source("minkowski.R")
-
 context("Tests for minkowski()")
 
 test_that("minkowski works as expected", {

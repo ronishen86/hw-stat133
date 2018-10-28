@@ -1,5 +1,3 @@
-source("hex-color.R")
-
 context("Test for is-hex-color")
 
 test_that("is_hex() works as expected", {

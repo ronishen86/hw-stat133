@@ -1,0 +1,136 @@
+---
+title: "warmup07-roni-shen"
+author: "Roni Shen"
+date: "11/13/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Number of characters per tweet
+
+```{r}
+
+library(dplyr)
+
+dat <- read.csv("text_emotion.csv") 
+
+# Count the number of characters in the tweet contents
+char_count <- rep(0, 40000)
+for (i in 1:40000) {
+  char_count[i] = nchar(toString(dat$content[i]))
+}
+
+summary(char_count)
+hist(char_count, breaks = seq(0, 180, by = 5), main = "Histogram of Character Count", xlab = "Character Count")
+
+# Are there any tweets with 0 characters?
+any(char_count == 0)
+
+# Are there any tweets with 1 character?
+any(char_count == 1)
+# How many?
+length(char_count[char_count == 1])
+# What is their content?
+dat$content[char_count == 1]
+# What is their location (i.e. index or position)?
+which(char_count %in% 1)
+
+# What is the tweet with the most characters?
+dat$tweet_id[max(char_count)]
+# the number of characters
+max(char_count)
+# display its content
+dat$content[char_count == max(char_count)]
+# what is its location (i.e. index or position)?
+which(char_count %in% max(char_count))
+
+```
+
+
+## Sentiment
+
+```{r}
+
+library(ggplot2)
+
+
+# What are the different types of sentiments?
+levels(dat$sentiment)
+
+# Compute the frequencies (i.e. counts) of each sentiment (and display these frequencies).
+table(dat$sentiment)
+
+# Graph the relative frequencies (i.e. proportions) with a horizontal barplot (bars horizontally oriented) in decreasing order, including names of sentiment types. 
+freq <- data.frame(prop.table(table(dat$sentiment)))
+
+ggplot(freq, aes(x = reorder(Var1, Freq), y = Freq)) +  geom_bar(stat = "identity") + coord_flip() + xlab("Sentiments") + ylab("Frequencies") + ggtitle("Relative Frequencies of Sentiments")
+
+# Sentiment and length of tweets: compute a table with the average length of characters per sentiment (i.e. average number of characters for neutral tweets, for happy tweets, etc.). Display this table.
+
+sent_tbl <- table(row.names = levels(dat$sentiment)) 
+for (i in levels(dat$sentiment)) {
+  sent_tbl[i] = nchar(toString(dat$content[dat$sentiment == i])) / length(dat$content[dat$sentiment == i])
+}
+sent_tbl
+
+```
+
+
+## Author (usernames)
+
+```{r}
+
+# No longer than 15 characters (if you find usernames longer than 15 characters, display them)
+author_count <- rep(0, 40000)
+for (i in 1:40000) {
+  author_count[i] = nchar(toString(dat$author[i]))
+}
+
+any(author_count > 15)
+
+# Contain alphanumeric characters and underscores (if you find usernames containing other symbols, display them)
+all(grepl("^[A-Za-z0-9_]*$", dat$author))
+dat$author[grepl("^[A-Za-z0-9_]*$", dat$author) == FALSE]
+
+# What is the number of characters of the shortest usernames? And what are the names of these authors? (write commands to answer these questions)
+min(author_count)
+dat$author[author_count == min(author_count)]
+
+```
+
+
+## Various Symbols and Strings
+
+```{r}
+
+library(stringr)
+
+# How many tweets contain at least one caret symbol "ˆ" (write a command to answer this question).
+length(dat$content[grepl("\\^", dat$content) == TRUE])
+
+# How many tweets contain three or more consecutive dollar symbols "$" (write a command to answer this question).
+length(dat$content[grepl("\\$$$*", dat$content) == TRUE])
+
+# How many tweets do NOT contain the characters "a" or "A" (write a command to answer this question).
+length(dat$content[grepl("^[Aa]", dat$content) == TRUE])
+
+# Display the first 10 elements of the tweets that do NOT contain the characters "a" or "A" (write a command to answer this question).
+head(dat$content[grepl("^[Aa]", dat$content) == TRUE], 10)
+
+# Number of exclamation symbols "!": compute a vector with the number of exclamation symbols in each tweet, and display its summary().
+num_ex <- rep(0, 40000)
+for (i in 1:40000) {
+  num_ex[i] = str_count(dat$content[i], "!")
+}
+
+# What’s the tweet (content) with the largest number of exclamation symbols !? Display its content. (write a command to answer this question)
+dat$content[num_ex == max(num_ex)]
+
+# How many tweets contain the individual strings "omg" or "OMG" (write a command to answer this question). 
+length(dat$content[grepl("omg", dat$content, ignore.case = TRUE) == TRUE])
+
+```
+

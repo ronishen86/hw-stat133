@@ -1,0 +1,89 @@
+---
+title: "lab11-roni-shen"
+author: "Roni Shen"
+date: "11/10/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Part 1) Computing Probabilities
+
+```{r}
+
+library(ggplot2)
+
+
+# bags
+bag1 <- c('white', 'white', 'red')
+bag2 <- c(rep('white', 3), 'red')
+
+bags <- c('bag1', 'bag2')
+repetitions = 1000
+
+drawn_balls1 <- character(repetitions)
+
+set.seed(345)
+for (i in 1:repetitions) {
+  # select one bag
+  chosen_bag <- sample(bags, 1)
+  
+  # draw a ball from chosen bag
+  if (chosen_bag == 'bag1') {
+    drawn_balls1[i] <- sample(bag1, 1)
+  } else {
+    drawn_balls1[i] <- sample(bag2, 1)
+  }
+}
+
+table(drawn_balls1) / repetitions
+
+# your turn
+box1 <- c("blue", "blue", "red")
+box2 <- c("blue", "blue", "red", "red", "red", "white")
+
+repetitions <- 1000
+drawn_balls <- matrix(character(repetitions*4), nrow = 1000)
+
+for (i in 1:1000) {
+  x = runif(1)
+  if (x > 0.5) {
+    drawn_balls[i,] <- sample(box1, 4, replace = TRUE)
+  } else {
+    drawn_balls[i,] <- sample(box2, 4)
+  }
+}
+
+blue_count <- character(repetitions)
+
+
+
+# proportion of samples containing: 0, 1, 2, 3, or 4 blue balls.
+prop.table(table(blue_count))
+
+# plot showing the relative frequencies of number of blue balls 
+blue_count_2 <- data.frame("reps" = rep(0, 1000), "0" = rep(0, 1000), "1" = rep(0, 1000), "2" = rep(0, 1000), "3" = rep(0, 1000), "4" = rep(0, 1000))
+
+for (i in 1:repetitions) {
+  blue_count_2[i,1] = i
+  for (j in 0:4) {
+    j_str = toString(j)
+    if (is.element(j_str, names(prop.table(table(blue_count[1:i]))))) {
+      blue_count_2[i,j+2] = prop.table(table(blue_count[1:i]))[[j_str]]
+    } 
+  }
+}
+
+ggplot(data = blue_count_2, aes(x = reps)) + 
+  geom_line(aes(y = X0, color = "red")) + 
+  geom_line(aes(y = X1, color = "army green")) + 
+  geom_line(aes(y = X2, color = "green")) + 
+  geom_line(aes(y = X3, color = "blue")) + 
+  geom_line(aes(y = X4, color = "purple")) +
+  scale_color_discrete(name = "numbers", labels = c("0", "1", "2", "3", "4", "5")) +
+  ylab("freqs") + ggtitle("Relative frequencies of number of blue balls")
+
+```
+

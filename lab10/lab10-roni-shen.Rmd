@@ -1,0 +1,334 @@
+---
+title: "lab10-roni-shen"
+author: "Roni Shen"
+date: "10/31/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Mobile Food Schedule Data
+
+```{r}
+
+library(dplyr)
+library(stringr)
+library(plotly)
+
+# getting the data
+github <- "https://raw.githubusercontent.com/ucb-stat133/stat133-fall-2018/master/"
+datafile <- "data/mobile-food-sf.csv"
+download.file(paste0(github, datafile), destfile = "mobile-food-sf.csv")
+
+# importing data into R
+dat <- read.csv('mobile-food-sf.csv', stringsAsFactors = FALSE)
+
+```
+
+
+## Plots with "plotly"
+
+```{r}
+
+# frequency of DayOfWeekStr in dat 
+day_freqs <- table(dat$DayOfWeekStr)
+
+barplot(day_freqs, border = NA, las = 3)
+
+# plotting with plotly
+plot_ly(x = names(day_freqs), 
+        y = day_freqs,
+        type = 'bar')
+
+# day frequencies table
+day_counts <- dat %>% 
+  select(DayOfWeekStr) %>%
+  group_by(DayOfWeekStr) %>%
+  summarise(count = n()) %>%
+  arrange(desc(count))
+
+day_counts
+
+# using poly_ly to plot a dataframe
+plot_ly(day_counts, 
+        x = ~DayOfWeekStr, 
+        y = ~count,
+        type = 'bar')
+
+# reordering the bars by count
+plot_ly(day_counts, 
+        x = ~reorder(DayOfWeekStr, count), 
+        y = ~count,
+        type = 'bar')
+
+```
+
+
+## Changing Times
+
+```{r}
+
+# toy string
+time1 <- '10AM'
+
+# hour
+str_sub(time1, start = 1, end = 2)
+
+# period
+str_sub(time1, start = 3, end = 4)
+
+times <- c('12PM', '10AM', '9AM', '8AM', '2PM')
+
+# subset time
+str_sub(times, start = 1, end = -3)
+
+# subset period
+str_sub(times, start = -2, end = nchar(times))
+
+# period
+str_sub(times, start = -2)
+
+```
+
+
+## Function str_replace()
+
+```{r}
+
+# replace AM/PM with ''
+str_replace(times, pattern = 'AM|PM', replacement = '')
+
+# Using times, create a numeric vector hours containing just the number time (i.e. hour)
+hours <-  str_replace(times, pattern = 'AM|PM', replacement = '')
+
+# Using times, create a character vector periods containing the period, e.g. AM or PM
+periods <- str_sub(times, start = -2)
+
+# Use plot_ly() to make a barchart of the counts for AM and PM values.
+periods_count = table(periods)
+plot_ly(x = names(periods_count),
+        y = periods_count,
+        type = 'bar')
+
+# Write R code to create a vector start24 that contains the hour in 24hr scale.
+
+#' @title convert to 24
+#' @description coverts a character vector of 12hr cycle times to numeric vector of 24 hr cycle times
+#' @param x a character vector of 12hr cycle times
+#' @return a numeric vector of 24 hr cycle times
+convertto24 <- function (x) {
+  y <- rep("", length(x))
+  x_hours <- str_sub(x, start = 1, end = -3)
+  x_periods <- str_sub(x, start = -2)
+  for (i in 1: length(x)) {
+    if (x_periods[i] == 'PM') {
+      y[i] = strtoi(x_hours[i]) + 12
+    } else {
+      y[i] = strtoi(x_hours[i])
+    }
+  }
+  return(as.numeric(y))
+}
+
+start24 = convertto24(times)
+
+# Add two columns start and end to the data frame dat, containing the starting and ending hour respectively (columns must be "numeric").
+dat$start <- convertto24(dat$starttime)
+dat$end <- convertto24(dat$endtime)
+
+# With the starting and ending hours, calculate the duration, and add one more column duration to the data frame dat
+dat$duration <- dat$end - dat$start 
+
+```
+
+
+## Latitude and Longitude Coordinates
+
+```{r}
+
+# location with longitude and latitude
+loc1 <- "(37.7651967350509,-122.416451692902)"
+
+# "remove" opening parenthesis 
+str_replace(loc1, pattern = '\\(', replacement = '')
+
+# "remove" closing parenthesis
+str_replace(loc1, pattern = '\\)', replacement = '')
+
+# removing both parenthesis: str_replace only replaces one
+str_replace(loc1, pattern = '\\(|\\)', replacement = '')
+
+# use str_replace_all to replace all 
+str_replace_all(loc1, pattern = '\\(|\\)', replacement = '')
+
+lat_lon <- str_replace_all(loc1, pattern = '\\(|\\)', replacement = '')
+
+# getting ride of commas
+str_replace(lat_lon, pattern = ',', replacement = '')
+
+# string split in stringr
+str_split(lat_lon, pattern = ',') # note: str_split returns a list 
+
+# vector with location values
+locs <- c(
+  "(37.7651967350509,-122.416451692902)",
+  "(37.7907890558203,-122.402273431333)",
+  "(37.7111991003088,-122.394693339395)",
+  "(37.7773000262759,-122.394812784799)",
+  NA
+)
+
+# list containing longitude and latitude
+lat_lon2 <- str_replace_all(locs, pattern = '\\(|\\)', replacement = '') %>% str_split(pattern = ',')
+
+# getting just the lat
+lat <- lapply(lat_lon2, function(x) x[1])
+
+# getting just the lon
+lon <- lapply(lat_lon2, function(x) x[2])
+
+# convert from list to vector
+lat <- as.numeric(unlist(lat))
+lon <- as.numeric(unlist(lon))
+
+# adding lat and lon to dat
+dat$lat <- as.numeric(unlist(dat$Location %>% str_replace_all(pattern = '\\(|\\)', replacement = '') %>% str_split(pattern = ',') %>% lapply(function(x) x[1])))
+dat$lon <- as.numeric(unlist(dat$Location %>% str_replace_all(pattern = '\\(|\\)', replacement = '') %>% str_split(pattern = ',') %>% lapply(function(x) x[2])))
+
+```
+
+
+## Plotting locations on a map
+
+```{r}
+
+# simple option
+plot(dat$lon, dat$lat, pch = 19, col = "#77777744")
+
+
+# Scatterplots with "plotly"
+plot_ly(x = dat$lon, y = dat$lat)
+
+# default scatterplot
+plot_ly(x = dat$lon, y = dat$lat, type = 'scatter', mode = 'markers')
+
+# similar to ggplot
+plot_ly(data = dat, x = ~lon, y = ~lat, type = 'scatter', mode = 'markers')
+
+```
+
+
+## Maps with "RgoogleMaps"
+
+```{r}
+
+# install.packages("RgoogleMaps")
+library(RgoogleMaps)
+
+# coordinates for center of the map
+center <- c(mean(dat$lat, na.rm = TRUE), mean(dat$lon, na.rm = TRUE))
+
+# zoom value
+zoom <- min(MaxZoom(range(dat$lat, na.rm = TRUE), 
+                    range(dat$lon, na.rm = TRUE)))
+
+# san francisco map
+map1 <- GetMap(center=center, zoom=zoom, destfile = "san-francisco.png")
+
+PlotOnStaticMap(map1, dat$lat, dat$lon, col = "#ed4964", pch=20)
+
+```
+
+
+## Maps with "ggmap"
+
+```{r}
+
+# install.packages("ggmap")
+library(ggmap)
+
+# let's get rid of rows with missing values
+dat <- na.omit(dat)
+
+# ggmap typically asks you for a zoom level, but we can try using ggmap's make_bbox function:
+sbbox <- make_bbox(lon = dat$lon, lat = dat$lat, f = .1)
+sbbox
+
+# get a 'terrain' map
+sf_map <- get_map(location = sbbox, maptype = "terrain", source = "google")
+
+ggmap(sf_map) + 
+  geom_point(data = dat, 
+             mapping = aes(x = lon, y = lat), 
+             color = "red", alpha = 0.2, size = 1)
+
+```
+
+
+## Let’s look for specific types of food
+
+```{r}
+
+# dat contains a column optionaltext describing the types of food and meals served by the food trucks
+dat$optionaltext[1:3]
+
+# first 10 elements
+foods <- dat$optionaltext[1:10]
+
+# Use str_detect() (or equivalently grep()) to match "Burritos" and "burritos".
+str_detect(tolower(foods), "burritos")
+
+# If you use grepl(), you can use ignore.case = TRUE to match for both.
+grepl("burritos", foods, ignore.case = TRUE)
+
+# Try another pattern: e.g. "tacos", or "quesadillas"
+grepl("taco", foods, ignore.case = TRUE)
+
+# Now create a data frame burritos by subsetting (i.e. filtering) the data frame to get only those rows that match "burritos"
+burritos <- dat[grepl("burritos", dat$optionaltext, ignore.case = TRUE),]
+
+# Use the lat and lon corrdinates in burritos to display a map of locations with burritos (see map below).
+plot_ly(data = burritos, x = ~lon, y = ~lat, type = 'scatter', mode = 'markers')
+
+burritos = na.omit(burritos)
+ggmap(sf_map) + 
+  geom_point(data = burritos, 
+             mapping = aes(x = lon, y = lat), 
+             color = "red", alpha = 0.2, size = 1)
+
+# Experiment with other types of foods
+ice_cream <- dat[grepl("ice cream", dat$optionaltext, ignore.case = TRUE),]
+ice_cream = na.omit(ice_cream)
+ggmap(sf_map) + 
+  geom_point(data = ice_cream, 
+             mapping = aes(x = lon, y = lat), 
+             color = "red", alpha = 0.2, size = 1)
+
+salad <- dat[grepl("salad", dat$optionaltext, ignore.case = TRUE),]
+salad = na.omit(salad)
+ggmap(sf_map) + 
+  geom_point(data = salad, 
+             mapping = aes(x = lon, y = lat), 
+             color = "red", alpha = 0.2, size = 1)
+
+noodle <- dat[grepl("noodle", dat$optionaltext, ignore.case = TRUE),]
+noodle = na.omit(noodle)
+ggmap(sf_map) + 
+  geom_point(data = noodle, 
+             mapping = aes(x = lon, y = lat), 
+             color = "red", alpha = 0.2, size = 1)
+
+
+
+# Challenge: try use facetting to show a type of food per facet (e.g. one facet for burritos, another for quesadillas, another one for tacos, etc)
+ggmap(sf_map) + 
+  geom_point(data = dat, 
+             mapping = aes(x = lon, y = lat), 
+             color = "red", alpha = 0.2, size = 1) +
+  facet_grid(~optionaltext)
+
+
+```

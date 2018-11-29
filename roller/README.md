@@ -1,0 +1,1 @@
+This assignment is about creating an R package that implements functions for simulating rolling an object (e.g. a coin or a die) multiple times. This includes creating objects, auxilary functions, methods for functions, and tests for everything. 

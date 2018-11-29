@@ -1,0 +1,67 @@
+---
+title: "introduction"
+author: "Roni Shen"
+date: "11/28/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(roller)
+```
+
+## Roller
+
+The package `"roller"` implements functions for simulating rolling an object, like a coin or a die, a number of times and the resulting sample and relative frequencies. 
+
+
+
+## Creating a `device`
+
+In order to create a `"device"` object with the function `device()`:
+
+```{r}
+my_dev <- devive()
+my_dev
+```
+
+By default, `device()` creates a _fair_ coin with standard sides `1` and 
+`2`, and with probability values for each side of 1/2.
+
+You can change the defatuls with arguments `sides` and `prob`:
+
+```{r}
+fair_die <- device(
+  sides = c('i', 'ii', 'iii', 'iv'), 
+  prob = rep(1/4, 4))
+fair_die
+```
+
+
+
+## Rolling a device
+
+Once you have defined a `"device"` object, you can use the function `roll()` to
+_roll_ a coin a given number of `times`. The output will be an object of class 
+`"roll"`, which will contain the vector of `rolls`:
+
+```{r}
+fair50 <- roll(fair_die, times = 50) 
+fair50
+```
+
+The `summary()` function gives you table of frequencies:
+```{r}
+summary(fair50)
+```
+
+
+
+## Plot of relative frequencies
+
+You can use the function `plot()` to create a graohic with the relative 
+frequencies of a series of coin tosses:
+
+```{r, fig.show='hold'}
+plot(toss100)
+```

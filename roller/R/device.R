@@ -7,11 +7,11 @@
 device <- function(sides = c(1,2), prob = c(1/2, 1/2)) {
   check_sides(sides)
   checks_prob(prob)
-  
+
   if (length(sides) != length(prob)){
     stop("\n'sides' and 'prob' have different lengths")
   }
-  
+
   object <- list(
     sides = sides,
     prob = prob
@@ -32,7 +32,7 @@ check_sides <- function(sides) {
 }
 
 # private function to check vector of probabilities
-checks_prob <- function(prob) {
+check_prob <- function(prob) {
   if (!is.numeric(prob)) {
     stop("\n'prob' must be a numeric vector")
   }

@@ -27,11 +27,11 @@ throw <- function(x, times = 1) {
 #' @keywords internal
 make_roll <- function(device, throw) {
   res <- list(
-    rolls = throw, 
-    sides = device$sides, 
-    prob = device$prob, 
+    rolls = throw,
+    sides = device$sides,
+    prob = device$prob,
     total = length(throw))
-    
+
   class(res) <- 'roll'
   res
 }
@@ -41,6 +41,7 @@ check_times <- function(times) {
   if (!is.numeric(times) | times < 1) {
     stop("'times' must be a positive integer greater than or equal to 1")
   }
+  TRUE
 }
 
 #' @export

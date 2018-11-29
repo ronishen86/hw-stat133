@@ -1,9 +1,10 @@
 ---
-title: "introduction"
+title: "report"
 author: "Roni Shen"
-date: "11/28/2018"
+date: "11/29/2018"
 output: html_document
 ---
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -21,8 +22,11 @@ The package `"roller"` implements functions for simulating rolling an object, li
 In order to create a `"device"` object with the function `device()`:
 
 ```{r}
-my_dev <- device()
-my_dev
+
+# default call: creates a coin device
+fair_coin <- device()
+fair_coin
+
 ```
 
 By default, `device()` creates a _fair_ coin with standard sides `1` and 
@@ -31,12 +35,28 @@ By default, `device()` creates a _fair_ coin with standard sides `1` and
 You can change the defatuls with arguments `sides` and `prob`:
 
 ```{r}
+
 fair_die <- device(
   sides = c('i', 'ii', 'iii', 'iv'), 
   prob = rep(1/4, 4))
 fair_die
+
+
+# die with non-standard sides
+weird_die <- device(
+  sides = c('i', 'ii', 'iii', 'iv'), 
+  prob = rep(1/4, 4))
+weird_die
+
 ```
 
+You can check if an object is a `"device"` object by using `is.device()` function.
+
+```{r}
+
+is.device(weird_die)
+
+```
 
 
 ## Rolling a device
@@ -46,13 +66,21 @@ _roll_ a coin a given number of `times`. The output will be an object of class
 `"roll"`, which will contain the vector of `rolls`:
 
 ```{r}
+
+# roll fair die 50 times
+fair_die <- device() 
+set.seed(123)
+
 fair50 <- roll(fair_die, times = 50) 
 fair50
+
 ```
 
 The `summary()` function gives you table of frequencies:
 ```{r}
+
 summary(fair50)
+
 ```
 
 
@@ -63,5 +91,7 @@ You can use the function `plot()` to create a graphic with the relative
 frequencies of a series of coin tosses:
 
 ```{r, fig.show='hold'}
-plot(toss100)
+
+plot.rolls(fair50)
+
 ```

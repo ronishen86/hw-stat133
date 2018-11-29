@@ -6,7 +6,7 @@
 #' @export
 device <- function(sides = c(1,2), prob = c(1/2, 1/2)) {
   check_sides(sides)
-  checks_prob(prob)
+  check_prob(prob)
 
   if (length(sides) != length(prob)){
     stop("\n'sides' and 'prob' have different lengths")
